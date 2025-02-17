@@ -71,8 +71,10 @@ const HomeScreen = () => {
         {news.map((article, index) => (
           <View key={index} style={styles.newsItem}>
             <Image source={{ uri: article.urlToImage }} style={styles.newsImage} />
-            <Text style={styles.newsTitle}>{article.title}</Text>
-            <Text style={styles.newsDescription}>{article.description}</Text>
+            <View style={styles.newsText}>
+              <Text style={styles.newsTitle}>{article.title}</Text>
+              <Text style={styles.newsDescription}>{article.description}</Text>
+            </View>
           </View>
         ))}
       </View>
@@ -83,7 +85,7 @@ const HomeScreen = () => {
 const AboutScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>About Screen</Text>
+      <Text style={styles.screenText}>About Screen</Text>
     </View>
   );
 };
@@ -91,7 +93,7 @@ const AboutScreen = () => {
 const SearchScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>Search Screen</Text>
+      <Text style={styles.screenText}>Search Screen</Text>
     </View>
   );
 };
@@ -99,7 +101,7 @@ const SearchScreen = () => {
 const SettingsScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>Settings Screen</Text>
+      <Text style={styles.screenText}>Settings Screen</Text>
     </View>
   );
 };
@@ -107,7 +109,7 @@ const SettingsScreen = () => {
 const ProfileScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>Profile Screen</Text>
+      <Text style={styles.screenText}>Profile Screen</Text>    
     </View>
   );
 };
@@ -122,42 +124,47 @@ const AppNavigator = () => {
         tabBarStyle: {
           backgroundColor: '#2f3542',
           borderTopWidth: 0,
+          borderRadius: 20,
+          marginBottom: 10,
+          height: 60,
+          paddingTop: 5,
         },
+        headerShown: false, // Disable header for a cleaner look
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="home" size={28} color={color} />,
         }}
       />
       <Tab.Screen
         name="About"
         component={AboutScreen}
         options={{
-          tabBarIcon: ({ color }) => <MaterialIcons name="info" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcons name="info" size={28} color={color} />,
         }}
       />
       <Tab.Screen
         name="Search"
         component={SearchScreen}
         options={{
-          tabBarIcon: ({ color }) => <Ionicons name="search" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="search" size={28} color={color} />,
         }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="settings" size={28} color={color} />,
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="person" size={28} color={color} />,
         }}
       />
     </Tab.Navigator>
@@ -174,37 +181,49 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   chartContainer: {
     backgroundColor: '#1e2923',
-    padding: 15,
-    marginBottom: 20,
-    borderRadius: 10,
+    padding: 20,
+    marginBottom: 30,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
   },
   newsContainer: {
-    padding: 15,
+    padding: 20,
     marginBottom: 20,
   },
   newsItem: {
     flexDirection: 'row',
-    marginBottom: 15,
+    marginBottom: 20,
     backgroundColor: '#444',
-    padding: 10,
-    borderRadius: 8,
+    padding: 15,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
   },
   newsImage: {
     width: 100,
     height: 100,
-    borderRadius: 8,
-    marginRight: 10,
+    borderRadius: 10,
+    marginRight: 15,
+  },
+  newsText: {
+    flex: 1,
   },
   newsTitle: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   newsDescription: {
     color: '#ddd',
@@ -215,5 +234,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2f3542',
+  },
+  screenText: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
   },
 });

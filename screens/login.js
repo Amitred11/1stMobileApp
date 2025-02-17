@@ -1,14 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Animated, Easing, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Animated, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { createUser, signInUser } from '../firebase/firebase';  // Import the functions
-import { Ionicons } from '@expo/vector-icons';  // To use the back icon
+import { createUser, signInUser } from '../firebase/firebase';  // Assuming these functions are defined
+import { Ionicons } from '@expo/vector-icons';
 
 const AuthScreen = ({ navigation }) => {
   const [isRegister, setIsRegister] = useState(false);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);  
   const [loading, setLoading] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -33,15 +36,19 @@ const AuthScreen = ({ navigation }) => {
       Alert.alert('Error', 'Please fill in all fields!');
       return;
     }
-    if (isRegister && password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match!');
-      return;
+    if (isRegister) {
+      if (!username) {
+        Alert.alert('Error', 'Username is required!');
+        return;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match!');
+        return;
+      }
     }
-    setLoading(true);
 
-    const authAction = isRegister
-      ? createUser(email, password)
-      : signInUser(email, password);
+    setLoading(true);
+    const authAction = isRegister ? createUser(email, password, username) : signInUser(email, password);
 
     authAction
       .then(() => {
@@ -63,46 +70,68 @@ const AuthScreen = ({ navigation }) => {
       </View>
 
       <Animated.View style={{ opacity: fadeAnim, width: '100%' }}>
+        {/* Register/Login Form */}
         <Text style={styles.title}>{isRegister ? 'Create Account' : 'Welcome Back'}</Text>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#ddd"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#ddd"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        
+
         {isRegister && (
           <TextInput
             style={styles.input}
-            placeholder="Confirm Password"
+            placeholder="Username"
             placeholderTextColor="#ddd"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
+            autoCapitalize="none"
+            value={username}
+            onChangeText={setUsername}
           />
         )}
-        
-        <TouchableOpacity 
-          style={styles.button} 
+
+        <TextInput
+          style={styles.input}
+          placeholder={isRegister ? 'Email' : 'Email or Username'}
+          placeholderTextColor="#ddd"
+          autoCapitalize="none"
+          value={isRegister ? email : username}
+          onChangeText={text => (isRegister ? setEmail(text) : setUsername(text))}
+        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            placeholderTextColor="#ddd"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        {isRegister && (
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Confirm Password"
+              placeholderTextColor="#ddd"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <Ionicons name={showConfirmPassword ? 'eye-off' : 'eye'} size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={styles.button}
           onPress={handleAuth}
           disabled={loading}
         >
           {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.buttonText}>{isRegister ? 'Sign Up' : 'Login'}</Text>}
         </TouchableOpacity>
-        
-        <TouchableOpacity onPress={toggleForm}>
+
+
+        <TouchableOpacity onPress={() => toggleForm()}>
           <Text style={styles.toggleText}>{isRegister ? 'Already have an account? Login' : "Don't have an account? Register"}</Text>
         </TouchableOpacity>
       </Animated.View>
@@ -118,7 +147,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 50,  // Added padding for a bit more space from the top
   },
   header: {
     position: 'absolute',
@@ -141,20 +169,28 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     color: '#fff',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#fff',
+    paddingVertical: 15,
   },
   button: {
     backgroundColor: '#ff4757',
     paddingVertical: 16,
-    paddingHorizontal: 35,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 6,
     alignItems: 'center',
-    marginBottom: 15, 
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
@@ -165,7 +201,6 @@ const styles = StyleSheet.create({
     marginTop: 25,
     fontSize: 16,
     color: '#ff4757',
-    textDecorationLine: 'underline',
     textAlign: 'center',
   },
 });

@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown, FadeOutDown, BounceIn } from 'react-native-reanimated';
 import LoginScreen from './screens/login';
 import HomeScreen from './screens/home';
+import OtpScreen from './screens/otp';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,7 @@ export default function App() {
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="otp" component={OtpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
