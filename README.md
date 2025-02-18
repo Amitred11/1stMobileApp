@@ -1,6 +1,6 @@
 # Project Title
 
-**Status:** Not yet finished, but feel free to use.
+**Status:** I will abandon this project....
 
 This project is currently under development. While it may not be feature-complete, you're welcome to use it as it is. Contributions are appreciated, and feel free to open issues for bugs or feature requests.
 
